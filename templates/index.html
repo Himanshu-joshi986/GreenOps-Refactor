@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze Code - GreenOps Refactor{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container-lg py-5">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold text-white mb-3">
+                        <span class="gradient-text">Optimize Your Code</span>
+                        <br>
+                        <span class="text-success">For Carbon Efficiency</span>
+                    </h1>
+                    <p class="lead text-light mb-4">
+                        Analyze your Python microservices with context-aware energy optimization. 
+                        Get real-time green scores and actionable carbon reduction suggestions.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success btn-lg" onclick="document.querySelector('form').scrollIntoView({behavior: 'smooth'})">
+                            <i class="fas fa-arrow-down me-2"></i>Get Started
+                        </button>
+                        <button class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-book me-2"></i>Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-illustration">
+                    <div class="stats-preview">
+                        <div class="stat-item">
+                            <i class="fas fa-leaf text-success"></i>
+                            <span>Green Score</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-bolt text-warning"></i>
+                            <span>Energy Usage</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-cloud text-info"></i>
+                            <span>Carbon Impact</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Analysis Section -->
+<div class="container-lg py-5">
+    <div class="row g-4">
+        <!-- Form Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-4 border-0">
+                    <h3 class="mb-0"><i class="fas fa-code me-2"></i>Code Analysis</h3>
+                    <p class="small text-muted mb-0 mt-2">Paste your Python code and configure context parameters</p>
+                </div>
+                <div class="card-body p-4">
+                    <form id="analysisForm">
+                        <!-- Code Input -->
+                        <div class="mb-4">
+                            <label class="form-label fw-600 mb-3">
+                                <i class="fas fa-file-code text-success me-2"></i>Python Code Snippet
+                            </label>
+                            <div class="code-editor-wrapper">
+                                <textarea 
+                                    id="codeInput" 
+                                    name="code" 
+                                    class="form-control form-control-lg code-editor" 
+                                    rows="14" 
+                                    placeholder="def process_order(items):&#10;    # Your code here&#10;    total = sum(item['price'] for item in items)&#10;    return total"
+                                    required
+                                    minlength="10"
+                                    maxlength="10000">
+                                </textarea>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    <span id="charCount">0</span> / 10,000 characters
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Context Parameters -->
+                        <div class="section-divider my-4">
+                            <span>Context Parameters</span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Hardware Type -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-600 mb-3">
+                                    <i class="fas fa-microchip text-primary me-2"></i>Hardware Type
+                                </label>
+                                <select name="hardware" id="hardwareSelect" class="form-select form-select-lg">
+                                    <option value="graviton">
+                                        <i class="fas fa-bolt me-2"></i>Graviton (ARM) - Recommended
+                                    </option>
+                                    <option value="x86">Intel/AMD (x86)</option>
+                                </select>
+                                <small class="d-block mt-2 text-muted">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    Graviton is 30-40% more efficient
+                                </small>
+                            </div>
+
+                            <!-- Carbon Intensity Slider -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-600 mb-3">
+                                    <i class="fas fa-leaf text-success me-2"></i>Carbon Intensity (gCO₂/kWh)
+                                </label>
+                                <div class="slider-container">
+                                    <input 
+                                        type="range" 
+                                        name="carbon_intensity"
+                                        id="carbonSlider" 
+                                        min="50" 
+                                        max="800" 
+                                        value="450" 
+                                        class="form-range"
+                                        oninput="updateCarbonDisplay()">
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="badge bg-success fs-6" id="carbonDisplay">450</span>
+                                        <small class="text-muted">
+                                            <i class="fas fa-globe me-1"></i>
+                                            <span id="regionInfo">Global Average</span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Latency -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-600 mb-3">
+                                    <i class="fas fa-clock text-info me-2"></i>Latency SLA (ms)
+                                </label>
+                                <div class="slider-container">
+                                    <input 
+                                        type="range" 
+                                        name="latency"
+                                        id="latencySlider" 
+                                        min="0" 
+                                        max="200" 
+                                        value="50" 
+                                        class="form-range"
+                                        oninput="updateLatencyDisplay()">
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="badge bg-info fs-6" id="latencyDisplay">50ms</span>
+                                        <small class="text-muted">Acceptable range</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Character Count Warning -->
+                            <div class="col-md-6">
+                                <div class="alert alert-info mb-0 py-3">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    <strong>Tip:</strong> More context helps better analysis results.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit" 
+                            id="submitBtn"
+                            class="btn btn-success btn-lg w-100 fw-600 py-3">
+                            <i class="fas fa-wand-magic-sparkles me-2"></i>
+                            Analyze & Get Green Suggestions
+                        </button>
+                    </form>
+
+                    <!-- Loading Spinner (hidden by default) -->
+                    <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                        <div class="spinner-border text-success mb-3" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Analyzing...</span>
+                        </div>
+                        <p class="text-muted fw-500">Analyzing your code with AI...</p>
+                        <div class="progress" style="height: 2px;">
+                            <div class="progress-bar progress-bar-animated bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Error Alert (hidden by default) -->
+                    <div id="errorAlert" class="alert alert-danger alert-dismissible fade mt-3" style="display: none;">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="col-lg-4">
+            <!-- How It Works -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fas fa-question-circle text-success me-2"></i>How It Works
+                    </h5>
+                    <ol class="small">
+                        <li class="mb-2">Paste your Python code</li>
+                        <li class="mb-2">Set context parameters</li>
+                        <li class="mb-2">We analyze complexity</li>
+                        <li class="mb-2">Get optimization suggestions</li>
+                        <li class="mb-0">Track carbon savings</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Hardware Comparison -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fas fa-microchip text-primary me-2"></i>Hardware Impact
+                    </h5>
+                    <div class="comparison-item mb-2">
+                        <small class="d-flex justify-content-between">
+                            <span><strong>Graviton</strong> (ARM)</span>
+                            <span class="badge bg-success">100% Base</span>
+                        </small>
+                    </div>
+                    <div class="comparison-item">
+                        <small class="d-flex justify-content-between">
+                            <span><strong>x86</strong> (Intel/AMD)</span>
+                            <span class="badge bg-warning">+30-40%</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carbon Regions -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fas fa-globe text-info me-2"></i>Carbon Intensity by Region
+                    </h5>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>France (Nuclear)</span>
+                            <span class="badge bg-success">~50</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Canada (Hydro)</span>
+                            <span class="badge bg-info">~80</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>US (Mixed)</span>
+                            <span class="badge bg-warning">~450</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Germany (50% Renewable)</span>
+                            <span class="badge bg-danger">~380</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fas fa-rocket text-success me-2"></i>Quick Tips
+                    </h5>
+                    <ul class="small list-unstyled">
+                        <li class="mb-2">🔄 Avoid nested loops</li>
+                        <li class="mb-2">💾 Use caching effectively</li>
+                        <li class="mb-2">⚡ Async I/O operations</li>
+                        <li class="mb-2">📊 Profile regularly</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Update carbon display
+    function updateCarbonDisplay() {
+        const value = document.getElementById('carbonSlider').value;
+        document.getElementById('carbonDisplay').textContent = value;
+        
+        // Update region info
+        const regions = {
+            '50': 'France (Nuclear)',
+            '80': 'Canada (Hydro)',
+            '200': 'UK (Renewables)',
+            '450': 'US (Mixed)',
+            '380': 'Germany (50% Renewable)'
+        };
+        
+        let closestRegion = 'Global Average';
+        let minDiff = Infinity;
+        for (const [val, region] of Object.entries(regions)) {
+            const diff = Math.abs(val - value);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestRegion = region;
+            }
+        }
+        document.getElementById('regionInfo').textContent = closestRegion;
+    }
+
+    // Update latency display
+    function updateLatencyDisplay() {
+        const value = document.getElementById('latencySlider').value;
+        document.getElementById('latencyDisplay').textContent = value + 'ms';
+    }
+
+    // Update character count
+    document.getElementById('codeInput').addEventListener('input', function() {
+        document.getElementById('charCount').textContent = this.value.length;
+    });
+
+    // Handle form submission
+    document.getElementById('analysisForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const code = document.getElementById('codeInput').value.trim();
+        const hardware = document.getElementById('hardwareSelect').value;
+        const carbon_intensity = parseFloat(document.getElementById('carbonSlider').value);
+        const latency = parseFloat(document.getElementById('latencySlider').value);
+        
+        // Validation
+        if (!code || code.length < 10) {
+            showError('Code snippet must be at least 10 characters long');
+            return;
+        }
+        
+        if (code.length > 10000) {
+            showError('Code snippet cannot exceed 10000 characters');
+            return;
+        }
+        
+        // Show loading
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('loadingSpinner').style.display = 'block';
+        document.getElementById('errorAlert').style.display = 'none';
+        
+        try {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    code,
+                    hardware,
+                    carbon_intensity,
+                    latency
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Analysis failed');
+            }
+            
+            const result = await response.json();
+            
+            // Store result for result page
+            sessionStorage.setItem('analysisResult', JSON.stringify({
+                code,
+                ...result
+            }));
+            
+            // Redirect to result page
+            window.location.href = '/result';
+            
+        } catch (error) {
+            showError(error.message);
+            document.getElementById('submitBtn').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+    });
+
+    function showError(message) {
+        const alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        alert.style.display = 'block';
+    }
+</script>
+{% endblock %}

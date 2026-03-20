@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - GreenOps Refactor{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-white mb-2">
+                <i class="fas fa-check-circle text-success me-2"></i>Analysis Complete
+            </h1>
+            <p class="lead text-muted">Your code has been analyzed for carbon efficiency and optimization potential</p>
+        </div>
+    </div>
+
+    <!-- Main Metrics Section -->
+    <div class="row g-4 mb-5">
+        <!-- Green Score Card (Large) -->
+        <div class="col-lg-4">
+            <div class="card metric-card score-card shadow-lg border-0" style="min-height: 320px;">
+                <div class="card-body d-flex flex-column justify-content-center text-center">
+                    <h3 class="card-title text-muted small fw-600 mb-3" style="text-transform: uppercase; letter-spacing: 2px;">Green Score</h3>
+                    <div class="score-display mb-3">
+                        <div class="score-circle" id="scoreCircle">
+                            <span class="score-value" id="scoreValue">0</span>
+                            <span class="score-unit">/100</span>
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-0" id="scoreInterpretation">Excellent optimization</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energy Consumption Card -->
+        <div class="col-lg-4">
+            <div class="card metric-card shadow-lg border-0" style="min-height: 320px;">
+                <div class="card-body">
+                    <h5 class="card-title fw-600 mb-4">
+                        <i class="fas fa-bolt text-warning me-2"></i>Energy Consumption
+                    </h5>
+                    <div class="metric-value mb-4">
+                        <div class="large-number text-warning" id="energyValue">0</div>
+                        <small class="text-muted">kWh per execution</small>
+                    </div>
+                    <div class="metric-breakdown mb-3">
+                        <div class="breakdown-item">
+                            <span class="small">Lines of Code</span>
+                            <span class="badge bg-warning" id="locMetric">0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="small">Complexity Score</span>
+                            <span class="badge bg-warning" id="complexityMetric">0</span>
+                        </div>
+                    </div>
+                    <canvas id="energyChart" style="max-height: 80px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carbon Impact Card -->
+        <div class="col-lg-4">
+            <div class="card metric-card shadow-lg border-0" style="min-height: 320px;">
+                <div class="card-body">
+                    <h5 class="card-title fw-600 mb-4">
+                        <i class="fas fa-leaf text-success me-2"></i>Carbon Footprint
+                    </h5>
+                    <div class="metric-value mb-4">
+                        <div class="large-number text-success" id="carbonValue">0</div>
+                        <small class="text-muted" id="carbonUnit">grams CO₂</small>
+                    </div>
+                    <div class="metric-breakdown mb-3">
+                        <div class="breakdown-item">
+                            <span class="small">Tree Equivalents Needed</span>
+                            <span class="badge bg-success" id="treeEquivalent">0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="small">Carbon Intensity</span>
+                            <span class="badge bg-success" id="carbonIntensity">0</span>
+                        </div>
+                    </div>
+                    <canvas id="carbonChart" style="max-height: 80px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Used Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3 border-0">
+                    <h5 class="mb-0 fw-600">
+                        <i class="fas fa-sliders-h me-2"></i>Analysis Context
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="context-item">
+                                <div class="context-label">Hardware Type</div>
+                                <div class="context-value" id="contextHardware">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="context-item">
+                                <div class="context-label">Carbon Intensity</div>
+                                <div class="context-value" id="contextCarbon">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="context-item">
+                                <div class="context-label">Latency SLA</div>
+                                <div class="context-value" id="contextLatency">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="context-item">
+                                <div class="context-label">Analysis Time</div>
+                                <div class="context-value" id="contextTime">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Improvement Suggestions Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3 border-0">
+                    <h5 class="mb-0 fw-600">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Optimization Recommendations
+                    </h5>
+                </div>
+                <div class="card-body" id="suggestionsContainer">
+                    <!-- Suggestions will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Improvements -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3 border-0">
+                    <h5 class="mb-0 fw-600">
+                        <i class="fas fa-rocket text-success me-2"></i>Quick Wins
+                    </h5>
+                </div>
+                <div class="card-body" id="improvementsContainer">
+                    <!-- Improvements will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Display Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3 border-0">
+                    <h5 class="mb-0 fw-600">
+                        <i class="fas fa-code me-2"></i>Analyzed Code
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <pre><code id="codeDisplay" class="language-python"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="/" class="btn btn-success btn-lg px-4">
+                    <i class="fas fa-plus me-2"></i>Analyze Another Code
+                </a>
+                <button class="btn btn-outline-secondary btn-lg px-4" onclick="downloadResults()">
+                    <i class="fas fa-download me-2"></i>Download Report
+                </button>
+                <button class="btn btn-outline-info btn-lg px-4" onclick="shareResults()">
+                    <i class="fas fa-share-alt me-2"></i>Share Results
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Instances (Global) -->
+<script>
+    let energyChartInstance = null;
+    let carbonChartInstance = null;
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize results from sessionStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        const resultData = JSON.parse(sessionStorage.getItem('analysisResult') || '{}');
+        
+        if (!resultData.green_score) {
+            // Fallback or error state
+            console.error('No analysis result found');
+            return;
+        }
+        
+        // Update all metrics
+        updateMetrics(resultData);
+        displaySuggestions(resultData);
+        displayImprovements(resultData);
+        displayCode(resultData.code);
+        initializeCharts(resultData);
+    });
+
+    function updateMetrics(data) {
+        // Green Score
+        const scoreCircle = document.getElementById('scoreCircle');
+        const scoreValue = data.green_score;
+        scoreCircle.style.setProperty('--score', scoreValue);
+        document.getElementById('scoreValue').textContent = Math.round(scoreValue);
+        
+        // Score interpretation
+        let interpretation = 'Needs Improvement';
+        if (scoreValue >= 80) interpretation = 'Excellent Optimization';
+        else if (scoreValue >= 60) interpretation = 'Good Optimization';
+        else if (scoreValue >= 40) interpretation = 'Average - Room for Improvement';
+        document.getElementById('scoreInterpretation').textContent = interpretation;
+        
+        // Energy
+        document.getElementById('energyValue').textContent = (data.predicted_energy_kwh * 1000000).toFixed(2) + ' µkWh';
+        document.getElementById('locMetric').textContent = data.loc;
+        document.getElementById('complexityMetric').textContent = data.complexity_score;
+        
+        // Carbon
+        document.getElementById('carbonValue').textContent = data.carbon_grams.toFixed(1);
+        document.getElementById('carbonUnit').textContent = 'grams CO₂ eq.';
+        document.getElementById('treeEquivalent').textContent = data.estimated_co2_tree_equivalents;
+        document.getElementById('carbonIntensity').textContent = data.carbon_intensity + ' gCO₂/kWh';
+        
+        // Context
+        document.getElementById('contextHardware').textContent = data.hardware.toUpperCase();
+        document.getElementById('contextCarbon').textContent = data.carbon_intensity + ' gCO₂/kWh';
+        document.getElementById('contextLatency').textContent = data.latency + 'ms';
+        document.getElementById('contextTime').textContent = new Date().toLocaleTimeString();
+    }
+
+    function displaySuggestions(data) {
+        const container = document.getElementById('suggestionsContainer');
+        container.innerHTML = '';
+        
+        if (data.insights && data.insights.length > 0) {
+            data.insights.forEach(insight => {
+                const priorityColor = {
+                    'high': 'danger',
+                    'medium': 'warning',
+                    'low': 'info'
+                }[insight.priority] || 'secondary';
+                
+                const priorityIcon = {
+                    'high': 'exclamation-circle',
+                    'medium': 'lightbulb',
+                    'low': 'info-circle'
+                }[insight.priority] || 'circle';
+                
+                const suggestionHtml = `
+                    <div class="suggestion-item mb-3 p-3 bg-light rounded border-left">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-${priorityIcon} text-${priorityColor} me-3 mt-1"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-600">${insight.title}</h6>
+                                <p class="small text-muted mb-2">${insight.description}</p>
+                                <span class="badge bg-${priorityColor} small">${insight.impact}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', suggestionHtml);
+            });
+        }
+    }
+
+    function displayImprovements(data) {
+        const container = document.getElementById('improvementsContainer');
+        container.innerHTML = '';
+        
+        if (data.improvements && data.improvements.length > 0) {
+            data.improvements.forEach(improvement => {
+                const itemHtml = `
+                    <div class="improvement-item p-2 mb-2">
+                        <small class="text-muted">
+                            ${improvement}
+                        </small>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+            });
+        }
+    }
+
+    function displayCode(code) {
+        const codeDisplay = document.getElementById('codeDisplay');
+        codeDisplay.textContent = code;
+        hljs.highlightElement(codeDisplay);
+    }
+
+    function initializeCharts(data) {
+        // Energy Chart
+        const energyCtx = document.getElementById('energyChart').getContext('2d');
+        energyChartInstance = new Chart(energyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Energy', 'Potential Savings'],
+                datasets: [{
+                    data: [data.predicted_energy_kwh * 1000000, Math.max(0, (100 - data.green_score) * data.predicted_energy_kwh * 100000)],
+                    backgroundColor: ['#FFC107', '#E7F5E7'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Carbon Chart
+        const carbonCtx = document.getElementById('carbonChart').getContext('2d');
+        carbonChartInstance = new Chart(carbonCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Current', 'Target (20% reduction)'],
+                datasets: [{
+                    data: [data.carbon_grams, data.carbon_grams * 0.2],
+                    backgroundColor: ['#198754', '#D5F0E3'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    function downloadResults() {
+        const data = JSON.parse(sessionStorage.getItem('analysisResult') || '{}');
+        const report = generateReport(data);
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(report));
+        element.setAttribute('download', `greenops-report-${new Date().getTime()}.txt`);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
+    function shareResults() {
+        const data = JSON.parse(sessionStorage.getItem('analysisResult') || '{}');
+        const text = `I just analyzed my code with GreenOps Refactor and got a Green Score of ${Math.round(data.green_score)}/100! 🌿 Check it out at greenops-refactor.com`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'GreenOps Analysis Result',
+                text: text
+            });
+        } else {
+            alert('Share feature not available on this browser');
+        }
+    }
+
+    function generateReport(data) {
+        return `
+GreenOps Refactor - Analysis Report
+Generated: ${new Date().toLocaleString()}
+
+================================
+SUMMARY METRICS
+================================
+Green Score: ${Math.round(data.green_score)}/100
+Energy Consumption: ${(data.predicted_energy_kwh * 1000000).toFixed(2)} µkWh
+Carbon Footprint: ${data.carbon_grams.toFixed(2)} grams CO₂
+Tree Equivalents: ${data.estimated_co2_tree_equivalents}
+
+================================
+CONTEXT PARAMETERS
+================================
+Hardware: ${data.hardware}
+Carbon Intensity: ${data.carbon_intensity} gCO₂/kWh
+Latency SLA: ${data.latency}ms
+
+================================
+CODE ANALYSIS
+================================
+Lines of Code: ${data.loc}
+Complexity Score: ${data.complexity_score}
+
+================================
+RECOMMENDATIONS
+================================
+${data.insights.map(i => `• ${i.title}: ${i.description} (Impact: ${i.impact})`).join('\n')}
+
+================================
+CODE
+================================
+${data.code}
+        `;
+    }
+</script>
+{% endblock %}
