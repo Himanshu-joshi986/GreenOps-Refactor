@@ -1,8 +1,45 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - GreenOps Refactor</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Highlight.js for code syntax -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/static/style.css">
+    
+    
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-bottom: 2px solid #e0e7ff;">
+        <div class="container-lg">
+            <a class="navbar-brand fw-bold" href="/" style="color: #10b981; font-size: 1.3rem;">
+                <i class="fas fa-leaf me-2"></i>GreenOps Refactor
+            </a>
+            <span class="navbar-text small" style="color: #64748b;">v2.0 • Carbon-Aware Code Optimization</span>
+        </div>
+    </nav>
 
-{% block title %}Analysis Results - GreenOps Refactor{% endblock %}
-
-{% block content %}
+    <!-- Main Content -->
+    <main>
+        
 <div class="container-lg py-5">
     <!-- Success Banner -->
     <div class="row mb-5">
@@ -32,12 +69,12 @@
                     <div class="mb-4" style="position: relative; width: 180px; height: 180px;">
                         <canvas id="scoreChart"></canvas>
                         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                            <div style="font-size: 3.5rem; font-weight: bold; color: #10b981;" id="scoreValue">{{ result.green_score | round | int }}</div>
+                            <div style="font-size: 3.5rem; font-weight: bold; color: #10b981;" id="scoreValue">97</div>
                             <div style="font-size: 1rem; color: #64748b;">/100</div>
                         </div>
                     </div>
                     <p class="text-muted small text-center mt-3" id="scoreInterpretation">
-                        {% if result.green_score >= 80 %}Excellent - Well Optimized{% elif result.green_score >= 60 %}Good - Room for Small Improvements{% elif result.green_score >= 40 %}Average - Significant Improvements Possible{% else %}Needs Improvement{% endif %}
+                        Excellent - Well Optimized
                     </p>
                 </div>
             </div>
@@ -53,7 +90,7 @@
                     <div class="mb-4">
                         <div class="mb-2">
                             <small class="text-muted d-block mb-2">Per Code Execution</small>
-                            <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;" id="energyValue">{{ (result.predicted_energy_mwh | float) | round(2) }}</div>
+                            <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;" id="energyValue">45.58</div>
                             <small class="text-muted" id="energyUnit">µkWh</small>
                         </div>
                     </div>
@@ -61,13 +98,13 @@
                         <div class="col-6">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-1">Lines of Code</small>
-                                <div class="fw-bold text-dark" id="locMetric">{{ result.code_metrics.lines_of_code }}</div>
+                                <div class="fw-bold text-dark" id="locMetric">11</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-1">Complexity</small>
-                                <div class="fw-bold text-dark" id="complexityMetric">{{ result.code_metrics.complexity_score }}</div>
+                                <div class="fw-bold text-dark" id="complexityMetric">16.5</div>
                             </div>
                         </div>
                     </div>
@@ -86,7 +123,7 @@
                     <div class="mb-4">
                         <div class="mb-2">
                             <small class="text-muted d-block mb-2">CO₂ Equivalent</small>
-                            <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="carbonValue">{{ (result.carbon_grams | float) | round(2) }}</div>
+                            <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="carbonValue">0.02</div>
                             <small class="text-muted">grams CO₂</small>
                         </div>
                     </div>
@@ -94,13 +131,13 @@
                         <div class="col-6">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-1">Tree Equivalents</small>
-                                <div class="fw-bold text-success" id="treeEquivalent">{{ (result.tree_equivalents | float) | round(1) }}</div>
+                                <div class="fw-bold text-success" id="treeEquivalent">0.0</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-1">Carbon Intensity</small>
-                                <div class="fw-bold text-dark" id="carbonIntensity">{{ result.context_used.carbon_intensity }} g/kWh</div>
+                                <div class="fw-bold text-dark" id="carbonIntensity">450.0 g/kWh</div>
                             </div>
                         </div>
                     </div>
@@ -125,34 +162,32 @@
                         <div class="col-md-6">
                             <div class="metric-item">
                                 <small class="text-muted d-block mb-2">Lines of Code</small>
-                                <h6 class="mb-0"><span id="metric-loc">{{ result.code_metrics.lines_of_code }}</span></h6>
+                                <h6 class="mb-0"><span id="metric-loc">11</span></h6>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="metric-item">
                                 <small class="text-muted d-block mb-2">Functions</small>
-                                <h6 class="mb-0"><span id="metric-functions">{{ result.code_metrics.num_functions }}</span></h6>
+                                <h6 class="mb-0"><span id="metric-functions">1</span></h6>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="metric-item">
                                 <small class="text-muted d-block mb-2">Loops Detected</small>
-                                <h6 class="mb-0"><span id="metric-loops">{{ result.code_metrics.num_loops }}</span></h6>
+                                <h6 class="mb-0"><span id="metric-loops">1</span></h6>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="metric-item">
                                 <small class="text-muted d-block mb-2">Code Patterns</small>
                                 <div id="metric-patterns" class="small">
-                                    {% set patterns = [] %}
-                                    {% if result.code_metrics.has_async %}{% set _ = patterns.append('Async') %}{% endif %}
-                                    {% if result.code_metrics.has_ml %}{% set _ = patterns.append('ML') %}{% endif %}
-                                    {% if result.code_metrics.has_io %}{% set _ = patterns.append('I/O') %}{% endif %}
-                                    {% if patterns %}
-                                        {% for pattern in patterns %}<span class="badge bg-info me-1">{{ pattern }}</span>{% endfor %}
-                                    {% else %}
+                                    
+                                    
+                                    
+                                    
+                                    
                                         <span class="text-muted">None detected</span>
-                                    {% endif %}
+                                    
                                 </div>
                             </div>
                         </div>
@@ -173,24 +208,24 @@
                     <div class="mb-4">
                         <small class="text-muted d-block mb-2">CPU Utilization</small>
                         <div class="progress" style="height: 24px;">
-                            <div class="progress-bar bg-success" id="cpu-bar" style="width: {{ result.hardware_utilization.cpu_percent | round | int }}%">
-                                <span class="small fw-600" id="cpu-percent">{{ result.hardware_utilization.cpu_percent | round | int }}%</span>
+                            <div class="progress-bar bg-success" id="cpu-bar" style="width: 50%">
+                                <span class="small fw-600" id="cpu-percent">50%</span>
                             </div>
                         </div>
                     </div>
                     <div class="mb-4">
                         <small class="text-muted d-block mb-2">RAM Utilization</small>
                         <div class="progress" style="height: 24px;">
-                            <div class="progress-bar bg-info" id="ram-bar" style="width: {{ result.hardware_utilization.ram_percent | round | int }}%">
-                                <span class="small fw-600" id="ram-percent">{{ result.hardware_utilization.ram_percent | round | int }}%</span>
+                            <div class="progress-bar bg-info" id="ram-bar" style="width: 25%">
+                                <span class="small fw-600" id="ram-percent">25%</span>
                             </div>
                         </div>
                     </div>
                     <div class="mb-4">
                         <small class="text-muted d-block mb-2">GPU Utilization</small>
                         <div class="progress" style="height: 24px;">
-                            <div class="progress-bar bg-warning" id="gpu-bar" style="width: {{ result.hardware_utilization.gpu_percent | round | int }}%">
-                                <span class="small fw-600" id="gpu-percent">{{ result.hardware_utilization.gpu_percent | round | int }}%</span>
+                            <div class="progress-bar bg-warning" id="gpu-bar" style="width: 0%">
+                                <span class="small fw-600" id="gpu-percent">0%</span>
                             </div>
                         </div>
                     </div>
@@ -213,25 +248,25 @@
                         <div class="col-md-3">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-2">Hardware Type</small>
-                                <div class="fw-600" id="contextHardware">{{ result.context_used.hardware.upper() }}</div>
+                                <div class="fw-600" id="contextHardware">X86</div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-2">Carbon Intensity</small>
-                                <div class="fw-600" id="contextCarbon">{{ result.context_used.carbon_intensity }} gCO₂/kWh</div>
+                                <div class="fw-600" id="contextCarbon">450.0 gCO₂/kWh</div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-2">Latency SLA</small>
-                                <div class="fw-600" id="contextLatency">{{ result.context_used.latency_ms }} ms</div>
+                                <div class="fw-600" id="contextLatency">50.0 ms</div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="bg-light rounded p-3">
                                 <small class="text-muted d-block mb-2">Cloud Region</small>
-                                <div class="fw-600" id="contextRegion">{{ result.context_used.region }}</div>
+                                <div class="fw-600" id="contextRegion">us-east-1</div>
                             </div>
                         </div>
                     </div>
@@ -249,7 +284,7 @@
                     <h5 class="card-title fw-600 mb-3">
                         <i class="fas fa-lightbulb text-warning me-2"></i>Primary Optimization Recommendation
                     </h5>
-                    <p class="card-text lead mb-0" id="mainSuggestion">{{ result.suggested_refactor }}</p>
+                    <p class="card-text lead mb-0" id="mainSuggestion">Code is well-optimized! Profile at runtime for further micro-optimizations</p>
                 </div>
             </div>
         </div>
@@ -264,18 +299,16 @@
                 </div>
                 <div class="card-body">
                     <div id="quickWinsList">
-                        {% if result.quick_wins and result.quick_wins | length > 0 %}
-                            {% for win in result.quick_wins %}
+                        
+                            
                             <div class="d-flex align-items-start mb-3">
                                 <i class="fas fa-check-circle text-success me-3 mt-1"></i>
                                 <div>
-                                    <p class="mb-0 small">{{ win }}</p>
+                                    <p class="mb-0 small">Profile code for specific bottlenecks</p>
                                 </div>
                             </div>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No immediate quick wins - code is well optimized</p>
-                        {% endif %}
+                            
+                        
                     </div>
                 </div>
             </div>
@@ -288,11 +321,21 @@
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-dark text-white py-3 border-0">
                     <h5 class="mb-0 fw-600">
-                        <i class="fas fa-code me-2"></i>Analyzed Code ({{ code|length }} characters)
+                        <i class="fas fa-code me-2"></i>Analyzed Code (213 characters)
                     </h5>
                 </div>
                 <div class="card-body p-0">
-                    <pre style="background: #f8f9fa; border-radius: 0 0 0.375rem 0.375rem; margin-bottom: 0;"><code id="codeDisplay" class="language-python" style="color: #2c3e50;">{{ code }}</code></pre>
+                    <pre style="background: #f8f9fa; border-radius: 0 0 0.375rem 0.375rem; margin-bottom: 0;"><code id="codeDisplay" class="language-python" style="color: #2c3e50;">def fibonacci(n):
+    &#34;&#34;&#34;Calculate fibonacci number&#34;&#34;&#34;
+    if n &lt;= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+result = fibonacci(10)
+print(f&#34;Result: {result}&#34;)</code></pre>
                 </div>
             </div>
         </div>
@@ -319,28 +362,62 @@
 <!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
-{% endblock %}
 
-{% block extra_js %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 mt-5" style="background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%); border-top: 2px solid #e0e7ff;">
+        <div class="container-lg">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6 class="mb-3" style="color: #10b981;"><i class="fas fa-leaf me-2"></i>GreenOps Refactor</h6>
+                    <p class="small" style="color: #64748b;">Context-aware energy optimization for cloud microservices.</p>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="mb-3" style="color: #2c3e50;">Features</h6>
+                    <ul class="list-unstyled small">
+                        <li style="color: #64748b;"><i class="fas fa-check-circle text-success me-2"></i>Code Analysis</li>
+                        <li style="color: #64748b;"><i class="fas fa-check-circle text-success me-2"></i>Energy Prediction</li>
+                        <li style="color: #64748b;"><i class="fas fa-check-circle text-success me-2"></i>Carbon Tracking</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="mb-3" style="color: #2c3e50;">Resources</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#" class="text-decoration-none" style="color: #10b981;">Documentation</a></li>
+                        <li><a href="#" class="text-decoration-none" style="color: #10b981;">GitHub</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <p class="text-center small mb-0">&copy; 2026 GreenOps. Optimizing code for a sustainable future.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="/static/script.js"></script>
+    
+    
 <script>
 // Store result globally - for export/copy functions
 const analysisResult = {
-    'green_score': {{ result.green_score }},
-    'predicted_energy_kwh': {{ result.predicted_energy_kwh }},
-    'predicted_energy_mwh': {{ result.predicted_energy_mwh }},
-    'carbon_grams': {{ result.carbon_grams }},
-    'carbon_kg': {{ result.carbon_kg }},
-    'tree_equivalents': {{ result.tree_equivalents }},
-    'suggested_refactor': "{{ result.suggested_refactor }}",
-    'quick_wins': {{ result.quick_wins | tojson }},
-    'context_used': {{ result.context_used | tojson }},
-    'code_metrics': {{ result.code_metrics | tojson }},
-    'energy_breakdown': {{ result.energy_breakdown | tojson }},
-    'hardware_utilization': {{ result.hardware_utilization | tojson }}
+    'green_score': 97.1,
+    'predicted_energy_kwh': 4.558e-05,
+    'predicted_energy_mwh': 45.58,
+    'carbon_grams': 0.021,
+    'carbon_kg': 2.1e-05,
+    'tree_equivalents': 0.0,
+    'suggested_refactor': "Code is well-optimized! Profile at runtime for further micro-optimizations",
+    'quick_wins': ["Profile code for specific bottlenecks"],
+    'context_used': {"carbon_intensity": 450.0, "hardware": "x86", "latency_ms": 50.0, "region": "us-east-1"},
+    'code_metrics': {"complexity_score": 16.5, "has_async": false, "has_io": false, "has_ml": false, "lines_of_code": 11, "num_functions": 1, "num_loops": 1},
+    'energy_breakdown': {"cpu_energy_kwh": 2.5e-07, "gpu_energy_kwh": 0.0, "ram_energy_kwh": 9e-08},
+    'hardware_utilization': {"cpu_percent": 49.6, "gpu_percent": 0.0, "ram_percent": 25.0}
 };
-
-// Expose to window so shared UI handlers (copy/export) can access it.
-window.analysisResult = analysisResult;
 
 // Initialize charts if canvas elements exist
 document.addEventListener('DOMContentLoaded', function() {
@@ -529,8 +606,8 @@ function initializeCharts(data) {
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
         alert('Copied to clipboard!');
-    }).catch(function() {
-        alert('Copy failed (clipboard may be blocked in this environment).');
+    }).catch(function(err) {
+        console.error('Failed to copy:', err);
     });
 }
 
@@ -554,4 +631,6 @@ function downloadResults() {
 }
 </script>
 
-{% endblock %}
+
+</body>
+</html>

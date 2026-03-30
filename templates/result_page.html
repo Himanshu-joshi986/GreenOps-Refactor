@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - GreenOps Refactor{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5">
+    <!-- Success Banner -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="d-flex align-items-center text-white">
+                    <i class="fas fa-check-circle me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h4 class="mb-1">Analysis Complete</h4>
+                        <p class="mb-0 small">Your code has been analyzed using machine learning for energy efficiency</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Metrics Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Green Score Card -->
+        <div class="col-lg-4">
+            <div class="card h-100 shadow-lg border-0 overflow-hidden">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center py-5">
+                    <h5 class="card-title text-muted mb-4 fw-600" style="text-transform: uppercase; letter-spacing: 1px;">Green Score</h5>
+                    <div style="font-size: 4rem; font-weight: bold; color: #10b981;" id="scoreValue">--</div>
+                    <div style="font-size: 1rem; color: #64748b;">/100</div>
+                    <p class="text-muted small text-center mt-3 fw-500" id="scoreInterpretation">--</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energy Card -->
+        <div class="col-lg-4">
+            <div class="card h-100 shadow-lg border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-600 mb-4"><i class="fas fa-bolt text-warning me-2"></i>Energy Consumption</h5>
+                    <div class="mb-4">
+                        <small class="text-muted d-block mb-2">Per Execution</small>
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #f59e0b;" id="energyValue">--</div>
+                        <small class="text-muted">µkWh</small>
+                    </div>
+                    <div class="mt-4">
+                        <small class="text-muted d-block mb-2">Standard Units</small>
+                        <div class="fw-bold text-secondary" id="energyKwh">--</div>
+                        <small class="text-muted">kWh</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carbon Card -->
+        <div class="col-lg-4">
+            <div class="card h-100 shadow-lg border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-600 mb-4"><i class="fas fa-leaf text-success me-2"></i>Carbon Footprint</h5>
+                    <div class="mb-4">
+                        <small class="text-muted d-block mb-2">CO₂ Equivalent</small>
+                        <div style="font-size: 2.5rem; font-weight: bold; color: #10b981;" id="carbonValue">--</div>
+                        <small class="text-muted">grams</small>
+                    </div>
+                    <div class="mt-4">
+                        <small class="text-muted d-block mb-2">Annual Tree Offset</small>
+                        <div class="fw-bold text-secondary" id="treeValue">--</div>
+                        <small class="text-muted">trees/year</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Metrics & Hardware Utilization -->
+    <div class="row g-4 mb-5">
+        <!-- Code Metrics -->
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-code me-2"></i>Code Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <small class="text-muted d-block mb-2">Lines of Code</small>
+                                <h6 class="fw-bold" id="metric-loc">--</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <small class="text-muted d-block mb-2">Complexity</small>
+                                <h6 class="fw-bold" id="metric-complexity">--</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <small class="text-muted d-block mb-2">Functions</small>
+                                <h6 class="fw-bold" id="metric-functions">--</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <small class="text-muted d-block mb-2">Loops</small>
+                                <h6 class="fw-bold" id="metric-loops">--</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted d-block mb-2">Patterns</small>
+                        <div id="metric-patterns" class="small">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hardware Utilization -->
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Hardware Utilization</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="fw-600">CPU</small>
+                            <small id="cpu-percent" class="fw-600">0%</small>
+                        </div>
+                        <div class="progress" style="height: 24px;">
+                            <div id="cpu-bar" class="progress-bar bg-danger" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="fw-600">RAM</small>
+                            <small id="ram-percent" class="fw-600">0%</small>
+                        </div>
+                        <div class="progress" style="height: 24px;">
+                            <div id="ram-bar" class="progress-bar bg-info" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="fw-600">GPU</small>
+                            <small id="gpu-percent" class="fw-600">0%</small>
+                        </div>
+                        <div class="progress" style="height: 24px;">
+                            <div id="gpu-bar" class="progress-bar bg-warning" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context & Recommendations -->
+    <div class="row g-4 mb-5">
+        <!-- Context -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Analysis Context</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block mb-2">Hardware</small>
+                            <h6 class="fw-bold" id="contextHardware">--</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block mb-2">Carbon Intensity</small>
+                            <h6 class="fw-bold" id="contextCarbon">--</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block mb-2">Latency SLA</small>
+                            <h6 class="fw-bold" id="contextLatency">--</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block mb-2">Region</small>
+                            <h6 class="fw-bold" id="contextRegion">--</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Suggestion -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Optimization Suggestion</h5>
+                    <p class="lead" id="mainSuggestion">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Wins -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-rocket text-success me-2"></i>Quick Wins (Easy Improvements)</h5>
+                </div>
+                <div class="card-body">
+                    <div id="quickWinsList">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0">Energy Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="energyChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0">Carbon Impact</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="carbonChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex gap-3 flex-wrap justify-content-center">
+                <a href="/" class="btn btn-success btn-lg px-5">
+                    <i class="fas fa-plus me-2"></i>Analyze Another Code
+                </a>
+                <button class="btn btn-outline-secondary btn-lg px-5" onclick="downloadResults()">
+                    <i class="fas fa-download me-2"></i>Download CSV
+                </button>
+                <button class="btn btn-outline-info btn-lg px-5" onclick="copyToClipboard(JSON.stringify(window.analysisResult, null, 2))">
+                    <i class="fas fa-copy me-2"></i>Copy JSON
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+let charts = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Result page loaded, checking sessionStorage...');
+    
+    const analysisResult = JSON.parse(sessionStorage.getItem('analysisResult') || '{}');
+    
+    console.log('Analysis result:', analysisResult);
+    
+    if (analysisResult.green_score === undefined || analysisResult.green_score === null) {
+        console.error('No analysis data found in sessionStorage');
+        // Show error message instead of redirecting
+        const alert = document.querySelector('.alert-success');
+        if (alert) {
+            alert.innerHTML = '<div class="alert alert-warning"><i class="fas fa-warning me-2"></i>No analysis data found. Please analyze code first. <a href="/">Go back to analyzer</a></div>';
+        }
+        return;
+    }
+    
+    window.analysisResult = analysisResult;
+    displayResults(analysisResult);
+    // Initialize charts after a small delay to ensure DOM is ready
+    setTimeout(() => initializeCharts(analysisResult), 200);
+});
+
+function displayResults(data) {
+    try {
+        console.log('Displaying results...');
+        
+        // Green Score
+        const score = Math.round(data.green_score ?? 0);
+        document.getElementById('scoreValue').textContent = score;
+        
+        let interp = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Average' : 'Poor';
+        document.getElementById('scoreInterpretation').textContent = interp;
+        
+        // Energy
+        const energyMwh = parseFloat(data.predicted_energy_mwh || 0);
+        const energyKwh = parseFloat(data.predicted_energy_kwh || 0);
+        document.getElementById('energyValue').textContent = energyMwh.toFixed(2);
+        document.getElementById('energyKwh').textContent = energyKwh.toExponential(2);
+        
+        // Carbon
+        const carbon = parseFloat(data.carbon_grams || 0);
+        document.getElementById('carbonValue').textContent = carbon.toFixed(3);
+        
+        // Trees
+        const trees = parseFloat(data.tree_equivalents || 0);
+        document.getElementById('treeValue').textContent = (trees * 365).toFixed(2);
+        
+        // Code Metrics
+        const metrics = data.code_metrics || {};
+        document.getElementById('metric-loc').textContent = (metrics.lines_of_code ?? '--');
+        document.getElementById('metric-complexity').textContent = ((metrics.complexity_score ?? 0)).toFixed(1);
+        document.getElementById('metric-functions').textContent = (metrics.num_functions ?? '--');
+        document.getElementById('metric-loops').textContent = (metrics.num_loops ?? '--');
+        
+        // Patterns
+        let patterns = [];
+        if (metrics.has_async) patterns.push('<span class="badge bg-info me-1">Async</span>');
+        if (metrics.has_ml) patterns.push('<span class="badge bg-warning me-1">ML</span>');
+        if (metrics.has_io) patterns.push('<span class="badge bg-danger me-1">I/O</span>');
+        document.getElementById('metric-patterns').innerHTML = patterns.length ? patterns.join(' ') : '<span class="text-muted">None</span>';
+        
+        // Hardware Utilization
+        const hw = data.hardware_utilization || {};
+        updateProgressBar('cpu-bar', 'cpu-percent', hw.cpu_percent || 0);
+        updateProgressBar('ram-bar', 'ram-percent', hw.ram_percent || 0);
+        updateProgressBar('gpu-bar', 'gpu-percent', hw.gpu_percent || 0);
+        
+        // Context
+        const ctx = data.context_used || {};
+        document.getElementById('contextHardware').textContent = (ctx.hardware || 'x86').toUpperCase();
+        document.getElementById('contextCarbon').textContent = (ctx.carbon_intensity || 450) + ' gCO₂/kWh';
+        document.getElementById('contextLatency').textContent = (ctx.latency_ms || 50) + ' ms';
+        document.getElementById('contextRegion').textContent = ctx.region || 'us-east-1';
+        
+        // Main Suggestion
+        document.getElementById('mainSuggestion').textContent = data.suggested_refactor || 'Code is well optimized';
+        
+        // Quick Wins
+        const quickWinsList = document.getElementById('quickWinsList');
+        if (data.quick_wins && data.quick_wins.length) {
+            quickWinsList.innerHTML = data.quick_wins.map(win => 
+                `<div class="d-flex mb-3"><i class="fas fa-check-circle text-success me-3 mt-1"></i><p class="mb-0 small">${win}</p></div>`
+            ).join('');
+        } else {
+            quickWinsList.innerHTML = '<p class="text-muted">Code is well optimized</p>';
+        }
+        
+        console.log('Results displayed successfully');
+    } catch (error) {
+        console.error('Error displaying results:', error);
+    }
+}
+
+function updateProgressBar(barId, percentId, value) {
+    const val = Math.min(100, Math.max(0, value || 0));
+    const bar = document.getElementById(barId);
+    const pct = document.getElementById(percentId);
+    if (bar) bar.style.width = val + '%';
+    if (pct) pct.textContent = Math.round(val) + '%';
+}
+
+function initializeCharts(data) {
+    try {
+        const energyCtx = document.getElementById('energyChart');
+        const energyVal = [
+            (parseFloat(data.energy_breakdown?.cpu_energy_kwh) || 0) * 1000000,
+            (parseFloat(data.energy_breakdown?.gpu_energy_kwh) || 0) * 1000000,
+            (parseFloat(data.energy_breakdown?.ram_energy_kwh) || 0) * 1000000
+        ];
+        
+        if (energyCtx && energyVal.some(v => v > 0)) {
+            if (charts.energy) charts.energy.destroy();
+            charts.energy = new Chart(energyCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['CPU', 'GPU', 'RAM'],
+                    datasets: [{
+                        data: energyVal,
+                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        const carbonCtx = document.getElementById('carbonChart');
+        if (carbonCtx) {
+            if (charts.carbon) charts.carbon.destroy();
+            charts.carbon = new Chart(carbonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current', 'Optimized (-30%)'],
+                    datasets: [{
+                        label: 'CO₂ (grams)',
+                        data: [data.carbon_grams, data.carbon_grams * 0.7],
+                        backgroundColor: ['#10b981', '#06b6d4']
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true } }
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error initializing charts:', error);
+    }
+}
+
+function downloadResults() {
+    const d = window.analysisResult;
+    const codeMetrics = d?.code_metrics || {};
+    const recommendation = (d?.suggested_refactor || '').toString().replace(/"/g, '""');
+    const csv =
+        'Metric,Value\n' +
+        `Green Score,${Math.round(d?.green_score ?? 0)}/100\n` +
+        `Energy (kWh),${d?.predicted_energy_kwh ?? 0}\n` +
+        `Carbon (grams),${d?.carbon_grams ?? 0}\n` +
+        `Lines of Code,${codeMetrics?.lines_of_code ?? 0}\n` +
+        `Complexity,${codeMetrics?.complexity_score ?? 0}\n` +
+        `Suggestion,"${recommendation}"\n`;
+    
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'greenops-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => {
+        alert('Copy failed (clipboard may be blocked in this environment).');
+    });
+}
+</script>
+{% endblock %}

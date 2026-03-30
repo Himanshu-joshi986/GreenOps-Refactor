@@ -51,9 +51,22 @@
 
 <!-- Main Analysis Section -->
 <div class="container-lg py-5">
+    <div class="row g-0 mb-5">
+        <div class="col-12">
+            <div class="alert alert-info border-0 shadow-sm">
+                <h5 class="mb-2"><i class="fas fa-lightbulb me-2"></i>How to Use</h5>
+                <ul class="mb-0 small">
+                    <li><strong>Use Test Samples:</strong> Click "Poor", "Moderate", or "Excellent" to load pre-written code examples and see how the model scores them</li>
+                    <li><strong>Write Your Own:</strong> Paste your Python code or clear the textarea to start fresh</li>
+                    <li><strong>Click "Analyze":</strong> See detailed results with energy consumption, carbon impact, and optimization suggestions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
-        <!-- Form Section -->
-        <div class="col-lg-8">
+        <!-- Left Column: Code Input -->
+        <div class="col-lg-7">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-dark text-white py-4 border-0">
                     <h3 class="mb-0"><i class="fas fa-code me-2"></i>Code Analysis</h3>
@@ -61,6 +74,33 @@
                 </div>
                 <div class="card-body p-4">
                     <form id="analysisForm">
+                        <!-- Test Code Examples Tabs -->
+                        <div class="mb-4">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="testCode" id="testPoor" value="poor" onchange="loadTestCode('poor')">
+                                <label class="btn btn-outline-danger" for="testPoor">
+                                    <i class="fas fa-warning me-1"></i>Poor Code
+                                </label>
+
+                                <input type="radio" class="btn-check" name="testCode" id="testModerate" value="moderate" onchange="loadTestCode('moderate')" checked>
+                                <label class="btn btn-outline-warning" for="testModerate">
+                                    <i class="fas fa-check me-1"></i>Moderate Code
+                                </label>
+
+                                <input type="radio" class="btn-check" name="testCode" id="testExcellent" value="excellent" onchange="loadTestCode('excellent')">
+                                <label class="btn btn-outline-success" for="testExcellent">
+                                    <i class="fas fa-star me-1"></i>Excellent Code
+                                </label>
+
+                                <button type="button" class="btn btn-outline-secondary" onclick="clearCode()">
+                                    <i class="fas fa-eraser me-1"></i>Clear
+                                </button>
+                            </div>
+                            <small class="d-block mt-2 text-muted">
+                                <i class="fas fa-info-circle me-1"></i>Click tabs to load sample code and compare results
+                            </small>
+                        </div>
+
                         <!-- Code Input -->
                         <div class="mb-4">
                             <label class="form-label fw-600 mb-3">
@@ -74,7 +114,7 @@
                                     rows="14" 
                                     placeholder="def process_order(items):&#10;    # Your code here&#10;    total = sum(item['price'] for item in items)&#10;    return total"
                                     required
-                                    minlength="10"
+                                    minlength="20"
                                     maxlength="10000">
                                 </textarea>
                                 <small class="text-muted d-block mt-2">
@@ -192,44 +232,108 @@
                         <i class="fas fa-exclamation-circle me-2"></i>
                         <span id="errorMessage"></span>
                     </div>
+
+                    <!-- Results Section (hidden by default) -->
+                    <div id="resultsContainer" class="mt-5" style="display: none;">
+                        <h4 class="mb-4 fw-bold">
+                            <i class="fas fa-chart-line text-success me-2"></i>Analysis Results
+                        </h4>
+                        <div id="inlineResults"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Info Cards -->
-        <div class="col-lg-4">
-            <!-- How It Works -->
-            <div class="card shadow-sm border-0 mb-3">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">
-                        <i class="fas fa-question-circle text-success me-2"></i>How It Works
-                    </h5>
-                    <ol class="small">
-                        <li class="mb-2">Paste your Python code</li>
-                        <li class="mb-2">Set context parameters</li>
-                        <li class="mb-2">We analyze complexity</li>
-                        <li class="mb-2">Get optimization suggestions</li>
-                        <li class="mb-0">Track carbon savings</li>
-                    </ol>
+        <!-- Right Column: Sample Codes -->
+        <div class="col-lg-5">
+            <div class="sticky-top" style="top: 2rem;">
+                <!-- Test Code Tabs -->
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-header bg-dark text-white py-3">
+                        <h5 class="mb-0"><i class="fas fa-flask me-2"></i>Try Sample Code</h5>
+                        <p class="small text-muted mb-0 mt-1">Click to load examples and compare scores</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Poor Sample -->
+                        <div class="mb-3">
+                            <button class="btn btn-outline-danger w-100 text-start py-3 position-relative" onclick="loadTestCode('poor')" style="cursor: pointer;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1"><i class="fas fa-warning me-2"></i>Poor Code Example</h6>
+                                        <small class="text-muted d-block">Inefficient - Nested loops, I/O operations</small>
+                                    </div>
+                                    <span class="badge bg-danger">Low Score</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Moderate Sample -->
+                        <div class="mb-3">
+                            <button class="btn btn-outline-warning w-100 text-start py-3 position-relative" onclick="loadTestCode('moderate')" style="cursor: pointer;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1"><i class="fas fa-check me-2"></i>Moderate Code Example</h6>
+                                        <small class="text-muted d-block">Better - Uses pandas (not fully optimized)</small>
+                                    </div>
+                                    <span class="badge bg-warning text-dark">Medium Score</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Excellent Sample -->
+                        <div class="mb-3">
+                            <button class="btn btn-outline-success w-100 text-start py-3 position-relative" onclick="loadTestCode('excellent')" style="cursor: pointer;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1"><i class="fas fa-star me-2"></i>Excellent Code Example</h6>
+                                        <small class="text-muted d-block">Optimized - Vectorized numpy operations</small>
+                                    </div>
+                                    <span class="badge bg-success">High Score</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <hr>
+
+                        <p class="small text-muted mb-2">
+                            <i class="fas fa-lightbulb me-1"></i><strong>Click any example</strong> to load it into the code area on the left, then analyze to see how it's scored!
+                        </p>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Info Cards -->
+                <!-- How It Works -->
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3" style="color: #2c3e50;">
+                            <i class="fas fa-question-circle me-2" style="color: #10b981;"></i>How It Works
+                        </h5>
+                        <ol class="small" style="color: #2c3e50;">
+                            <li class="mb-2"><strong>Paste</strong> your Python code</li>
+                            <li class="mb-2"><strong>Set</strong> context parameters</li>
+                            <li class="mb-2"><strong>Analyze</strong> code complexity</li>
+                            <li class="mb-2"><strong>Get</strong> optimization tips</li>
+                            <li class="mb-0"><strong>Track</strong> carbon savings</li>
+                        </ol>
+                    </div>
+                </div>
 
             <!-- Hardware Comparison -->
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">
-                        <i class="fas fa-microchip text-primary me-2"></i>Hardware Impact
+                    <h5 class="card-title fw-bold mb-3" style="color: #2c3e50;">
+                        <i class="fas fa-microchip me-2" style="color: #7c3aed;"></i>Hardware Impact
                     </h5>
-                    <div class="comparison-item mb-2">
-                        <small class="d-flex justify-content-between">
+                    <div class="comparison-item mb-2" style="background: #f0fdf4; border: 1px solid #e0e7ff; padding: 0.75rem; border-radius: 8px;">
+                        <small class="d-flex justify-content-between" style="color: #2c3e50;">
                             <span><strong>Graviton</strong> (ARM)</span>
-                            <span class="badge bg-success">100% Base</span>
+                            <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">100% Base</span>
                         </small>
                     </div>
-                    <div class="comparison-item">
-                        <small class="d-flex justify-content-between">
+                    <div class="comparison-item" style="background: #fffbeb; border: 1px solid #e0e7ff; padding: 0.75rem; border-radius: 8px;">
+                        <small class="d-flex justify-content-between" style="color: #2c3e50;">
                             <span><strong>x86</strong> (Intel/AMD)</span>
-                            <span class="badge bg-warning">+30-40%</span>
+                            <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">+30-40%</span>
                         </small>
                     </div>
                 </div>
@@ -238,41 +342,41 @@
             <!-- Carbon Regions -->
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">
-                        <i class="fas fa-globe text-info me-2"></i>Carbon Intensity by Region
+                    <h5 class="card-title fw-bold mb-3" style="color: #2c3e50;">
+                        <i class="fas fa-globe me-2" style="color: #0ea5e9;"></i>Carbon Intensity by Region
                     </h5>
-                    <div class="small">
+                    <div class="small" style="color: #2c3e50;">
                         <div class="d-flex justify-content-between mb-2">
-                            <span>France (Nuclear)</span>
-                            <span class="badge bg-success">~50</span>
+                            <span><strong>France</strong> (Nuclear)</span>
+                            <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">~50</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Canada (Hydro)</span>
-                            <span class="badge bg-info">~80</span>
+                            <span><strong>Canada</strong> (Hydro)</span>
+                            <span style="background: #0ea5e9; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">~80</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span>US (Mixed)</span>
-                            <span class="badge bg-warning">~450</span>
+                            <span><strong>US</strong> (Mixed)</span>
+                            <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">~450</span>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <span>Germany (50% Renewable)</span>
-                            <span class="badge bg-danger">~380</span>
+                            <span><strong>Germany</strong> (50% Renewable)</span>
+                            <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">~380</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Tips -->
-            <div class="card shadow-sm border-0 bg-light">
+            <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%); border: 2px solid #e0e7ff;">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">
-                        <i class="fas fa-rocket text-success me-2"></i>Quick Tips
+                    <h5 class="card-title fw-bold mb-3" style="color: #2c3e50;">
+                        <i class="fas fa-rocket me-2" style="color: #10b981;"></i>Quick Tips
                     </h5>
-                    <ul class="small list-unstyled">
-                        <li class="mb-2">🔄 Avoid nested loops</li>
-                        <li class="mb-2">💾 Use caching effectively</li>
-                        <li class="mb-2">⚡ Async I/O operations</li>
-                        <li class="mb-2">📊 Profile regularly</li>
+                    <ul class="small list-unstyled" style="color: #2c3e50;">
+                        <li class="mb-2"><strong>✓</strong> Avoid nested loops</li>
+                        <li class="mb-2"><strong>✓</strong> Use caching</li>
+                        <li class="mb-2"><strong>✓</strong> Async I/O ops</li>
+                        <li class="mb-1"><strong>✓</strong> Profile code</li>
                     </ul>
                 </div>
             </div>
@@ -320,73 +424,116 @@
     document.getElementById('codeInput').addEventListener('input', function() {
         document.getElementById('charCount').textContent = this.value.length;
     });
+    
+    // Test code samples for verification
+    const testCodes = {
+        poor: `# POOR: Inefficient nested loops with nested I/O
+def process_orders(orders):
+    total_revenue = 0
+    for order in orders:
+        for item in order['items']:
+            for price_list in get_price_lists():  # I/O in loop!
+                if item['id'] in price_list:
+                    amount = item['quantity'] * price_list[item['id']]
+                    total_revenue += amount
+                    # Inefficient: Database query in loop
+                    update_analytics_db(item['id'], amount)
+    return total_revenue
 
-    // Handle form submission
-    document.getElementById('analysisForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const code = document.getElementById('codeInput').value.trim();
-        const hardware = document.getElementById('hardwareSelect').value;
-        const carbon_intensity = parseFloat(document.getElementById('carbonSlider').value);
-        const latency = parseFloat(document.getElementById('latencySlider').value);
-        
-        // Validation
-        if (!code || code.length < 10) {
-            showError('Code snippet must be at least 10 characters long');
-            return;
-        }
-        
-        if (code.length > 10000) {
-            showError('Code snippet cannot exceed 10000 characters');
-            return;
-        }
-        
-        // Show loading
-        document.getElementById('submitBtn').style.display = 'none';
-        document.getElementById('loadingSpinner').style.display = 'block';
-        document.getElementById('errorAlert').style.display = 'none';
-        
-        try {
-            const response = await fetch('/api/analyze', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    code,
-                    hardware,
-                    carbon_intensity,
-                    latency
-                })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Analysis failed');
-            }
-            
-            const result = await response.json();
-            
-            // Store result for result page
-            sessionStorage.setItem('analysisResult', JSON.stringify({
-                code,
-                ...result
-            }));
-            
-            // Redirect to result page
-            window.location.href = '/result';
-            
-        } catch (error) {
-            showError(error.message);
-            document.getElementById('submitBtn').style.display = 'block';
-            document.getElementById('loadingSpinner').style.display = 'none';
-        }
-    });
+# Multiple nested loops without vectorization
+def calculate_distances(points):
+    distances = []
+    for i in range(len(points)):
+        for j in range(len(points)):
+            dist = 0
+            for k in range(len(points[0])):
+                dist += (points[i][k] - points[j][k]) ** 2
+            distances.append(dist ** 0.5)
+    return distances
 
-    function showError(message) {
-        const alert = document.getElementById('errorAlert');
-        document.getElementById('errorMessage').textContent = message;
-        alert.style.display = 'block';
+orders = [{'items': [{'id': 1, 'quantity': 5}]}] * 100
+process_orders(orders)`,
+
+        moderate: `# MODERATE: Some optimization, but can improve
+import pandas as pd
+from functools import lru_cache
+
+@lru_cache(maxsize=128)
+def get_pricing(category):
+    return {'A': 10.0, 'B': 20.0, 'C': 15.0}.get(category, 0)
+
+def process_orders(orders_df):
+    # Using pandas is better than loops, but not fully vectorized
+    results = []
+    for _, order in orders_df.iterrows():
+        total = order['quantity'] * get_pricing(order['category'])
+        results.append(total)
+    return sum(results)
+
+def calculate_average(data):
+    # Manual calculation instead of built-in
+    total = 0
+    for value in data:
+        total += value
+    return total / len(data) if data else 0
+
+orders_data = pd.DataFrame({
+    'quantity': [5, 10, 3] * 10,
+    'category': ['A', 'B', 'C'] * 10
+})
+
+result = process_orders(orders_data)`,
+
+        excellent: `# EXCELLENT: Optimized, vectorized, async-ready
+import pandas as pd
+import numpy as np
+from functools import lru_cache
+
+pricing_map = {'A': 10.0, 'B': 20.0, 'C': 15.0}
+
+def process_orders(orders_df):
+    # Vectorized operation - no loops!
+    orders_df['price'] = orders_df['category'].map(pricing_map)
+    orders_df['total'] = orders_df['quantity'] * orders_df['price']
+    return orders_df['total'].sum()
+
+def calculate_average(data):
+    # Use built-in numpy for efficiency
+    return np.mean(data) if len(data) > 0 else 0
+
+def batch_process_async(items):
+    # Pre-allocate arrays for efficiency
+    results = np.zeros(len(items))
+    for i, item in enumerate(items):
+        results[i] = item ** 2
+    return results
+
+# Test with larger dataset
+orders_data = pd.DataFrame({
+    'quantity': [5, 10, 3] * 100,
+    'category': ['A', 'B', 'C'] * 100
+})
+
+result = process_orders(orders_data)`
+    };
+
+    function loadTestCode(quality) {
+        const codeInput = document.getElementById('codeInput');
+        codeInput.value = testCodes[quality];
+        codeInput.dispatchEvent(new Event('input')); // Update char count
     }
+
+    function clearCode() {
+        document.getElementById('codeInput').value = '';
+        document.getElementById('charCount').textContent = '0';
+    }
+
+    // Load moderate code by default
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTestCode('moderate');
+    });
+    
+    // Form submission is handled by initializeAnalysisForm() in script.js
+    // to ensure proper API integration and error handling
 </script>
 {% endblock %}

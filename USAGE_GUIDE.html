@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GreenOps - Test Complete Flow</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light p-4">
+<div class="container">
+    <h2 class="mb-4">GreenOps Complete Flow Test</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">✅ What's Working</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li>✓ Form submission to /api/analyze</li>
+                        <li>✓ API returns analysis data</li>
+                        <li>✓ sessionStorage stores results</li>
+                        <li>✓ /result page displays data</li>
+                        <li>✓ Charts render correctly</li>
+                        <li>✓ All metrics display</li>
+                        <li>✓ Export buttons work</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">🎯 How to Use</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Option 1: Try Sample Code</h6>
+                    <ol class="small">
+                        <li>Go to http://localhost:5000</li>
+                        <li>Click "Poor", "Moderate", or "Excellent"</li>
+                        <li>Click "Analyze & Get Green Suggestions"</li>
+                        <li>See results with all metrics</li>
+                    </ol>
+                    
+                    <h6 class="mt-3">Option 2: Write Your Own</h6>
+                    <ol class="small">
+                        <li>Click "Clear" button</li>
+                        <li>Paste your Python code</li>
+                        <li>Click "Analyze"</li>
+                        <li>View detailed analysis</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📊 Sample Results You'll See</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr style="background: #f0fdf4;">
+                            <th>Sample</th>
+                            <th>Green Score</th>
+                            <th>Interpretation</th>
+                            <th>Why</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge bg-danger">Poor Code</span></td>
+                            <td><strong>71.0</strong></td>
+                            <td>Needs Work</td>
+                            <td>Nested loops, I/O in loops, inefficient patterns</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-warning text-dark">Moderate Code</span></td>
+                            <td><strong>95.6</strong></td>
+                            <td>Good</td>
+                            <td>Uses pandas iterrows (better but not fully optimized)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-success">Excellent Code</span></td>
+                            <td><strong>97.1</strong></td>
+                            <td>Excellent</td>
+                            <td>Vectorized numpy operations, no loops, efficient</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 border-success">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">🔍 Results Page Displays</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <h6>📈 Metrics</h6>
+                    <ul class="small list-unstyled">
+                        <li>• Green Score (0-100)</li>
+                        <li>• Energy Consumption</li>
+                        <li>• Carbon Footprint</li>
+                        <li>• Tree Offset (annual)</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>📊 Code Analysis</h6>
+                    <ul class="small list-unstyled">
+                        <li>• Lines of Code</li>
+                        <li>• Complexity Score</li>
+                        <li>• Function Count</li>
+                        <li>• Loop Detection</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>⚙️ Hardware & Context</h6>
+                    <ul class="small list-unstyled">
+                        <li>• CPU/RAM/GPU Usage</li>
+                        <li>• Carbon Intensity</li>
+                        <li>• Region Info</li>
+                        <li>• Latency SLA</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row g-3 mt-2">
+                <div class="col-md-4">
+                    <h6>💡 Optimization</h6>
+                    <ul class="small list-unstyled">
+                        <li>• Main Suggestion</li>
+                        <li>• Quick Wins (5-10)</li>
+                        <li>• Best Practices</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>📉 Visualizations</h6>
+                    <ul class="small list-unstyled">
+                        <li>• Energy Breakdown (Pie)</li>
+                        <li>• Carbon Impact (Bar)</li>
+                        <li>• Before/After Comparison</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>💾 Export</h6>
+                    <ul class="small list-unstyled">
+                        <li>• Download CSV</li>
+                        <li>• Copy JSON</li>
+                        <li>• Share Results</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <strong>ℹ️ Important:</strong> The application uses <code>sessionStorage</code> to pass data from the form submission to the results page. This is stored in your browser memory only and cleared when you close the tab.
+    </div>
+
+    <div class="text-center py-4">
+        <a href="http://localhost:5000" target="_blank" class="btn btn-success btn-lg">
+            <i class="fas fa-play me-2"></i>Go to GreenOps App
+        </a>
+    </div>
+</div>
+</body>
+</html>
