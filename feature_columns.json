@@ -1,0 +1,16 @@
+[
+  "loc",
+  "blank_lines",
+  "comment_lines",
+  "num_functions",
+  "num_classes",
+  "num_loops",
+  "nested_loops",
+  "list_comprehensions",
+  "num_imports",
+  "try_except_blocks",
+  "has_recursion",
+  "io_operations",
+  "uses_numpy",
+  "uses_pandas"
+]

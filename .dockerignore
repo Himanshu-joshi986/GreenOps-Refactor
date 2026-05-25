@@ -1,0 +1,86 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Virtual environments
+venv/
+venv_1/
+venv_fresh/
+env/
+ENV/
+.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+.pytest/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# Docker
+.dockerfile
+docker-compose.*.yml
+Dockerfile*
+
+# Documentation
+*.md
+docs/
+FACULTY_PROJECT_DOCUMENTATION.md
+COMPLETE_PROJECT_DETAILS.md
+FIXES_AND_DEPLOYMENT.md
+
+# Testing
+test_*.py
+*_test.py
+tests/
+.pytest_cache/
+
+# Training data (optional - comment out if you want to include)
+training_data.csv
+*.pkl
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+.directory
+
+# Node modules (if using npm)
+node_modules/
+npm-debug.log

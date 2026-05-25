@@ -1,0 +1,78 @@
+# GreenOps Refactor — docker-compose.yml
+
+services:
+  # ─── Main GreenOps web app ───
+  greenops:
+    build:
+      context: .
+      target: production
+    container_name: greenops-app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - HOME_ASSISTANT_URL=${HOME_ASSISTANT_URL:-}
+      - HOME_ASSISTANT_TOKEN=${HOME_ASSISTANT_TOKEN:-}
+      - HOME_ASSISTANT_CO2_SENSOR=${HOME_ASSISTANT_CO2_SENSOR:-}
+      - HOME_ASSISTANT_FOSSIL_SENSOR=${HOME_ASSISTANT_FOSSIL_SENSOR:-}
+      - GREENOPS_GRID_LABEL=${GREENOPS_GRID_LABEL:-}
+      - ELECTRICITY_MAPS_API_KEY=${ELECTRICITY_MAPS_API_KEY:-}
+      - ELECTRICITY_MAPS_ZONE=${ELECTRICITY_MAPS_ZONE:-IN-WE}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5-coder:1.5b}
+      - SECRET_KEY=${SECRET_KEY:-greenops-dev-secret-change-me}
+      - DEBUG=${DEBUG:-false}
+    volumes:
+      # Persist trained model between restarts
+      - model-data:/app/models
+      - ./energy_predictor.pkl:/app/energy_predictor.pkl:ro
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - greenops-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ─── Ollama LLM server ───
+  ollama:
+    image: ollama/ollama:latest
+    container_name: greenops-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=5m
+    restart: unless-stopped
+    networks:
+      - greenops-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    # Pull the model on first run
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        sleep 5
+        ollama pull ${OLLAMA_MODEL:-qwen2.5-coder:1.5b}
+        wait
+
+networks:
+  greenops-net:
+    driver: bridge
+
+volumes:
+  model-data:
+    driver: local
+  ollama-data:
+    driver: local

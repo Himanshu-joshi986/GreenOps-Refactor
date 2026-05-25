@@ -1,0 +1,148 @@
+# GreenOps Refactor — Production docker-compose.yml
+# For running on Home Assistant Docker or standalone servers
+# 
+# Usage:
+#   1. Copy .env.example to .env
+#   2. Fill in your secrets and API keys
+#   3. docker-compose -f docker-compose.prod.yml up -d
+
+services:
+  # ─────────────────────────────────────────────
+  # Main GreenOps Application
+  # ─────────────────────────────────────────────
+  greenops-app:
+    # image: yourusername/greenops-refactor:latest
+    # Build locally:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    container_name: greenops-app
+    restart: unless-stopped
+    networks:
+      - greenops-network
+    
+    ports:
+      - "5000:5000"
+    
+    environment:
+      # Flask Configuration
+      - FLASK_ENV=production
+      - DEBUG=false
+      - SECRET_KEY=${SECRET_KEY:-change-me-to-random-secret-string}
+      
+      # Home Assistant Integration (Primary)
+      - HOME_ASSISTANT_URL=${HOME_ASSISTANT_URL:-}
+      - HOME_ASSISTANT_TOKEN=${HOME_ASSISTANT_TOKEN:-}
+      - HOME_ASSISTANT_CO2_SENSOR=${HOME_ASSISTANT_CO2_SENSOR:-}
+      - HOME_ASSISTANT_FOSSIL_SENSOR=${HOME_ASSISTANT_FOSSIL_SENSOR:-}
+      - GREENOPS_GRID_LABEL=${GREENOPS_GRID_LABEL:-Grid Carbon Intensity}
+      
+      # Electricity Maps API (Fallback)
+      - ELECTRICITY_MAPS_API_KEY=${ELECTRICITY_MAPS_API_KEY:-}
+      - ELECTRICITY_MAPS_ZONE=${ELECTRICITY_MAPS_ZONE:-IN-WE}
+      
+      # Ollama LLM Configuration
+      - OLLAMA_BASE_URL=http://greenops-ollama:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5-coder:1.5b}
+      - GREENOPS_OLLAMA_AVG_POWER_WATTS=${GREENOPS_OLLAMA_AVG_POWER_WATTS:-}
+      
+      # Optional: Logging
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    
+    # Persist trained models between restarts
+    volumes:
+      - greenops-models:/app/models
+      - ./energy_predictor.pkl:/app/energy_predictor.pkl:ro
+      - ./feature_columns.json:/app/feature_columns.json:ro
+    
+    # Only start after Ollama has started (not waiting for health check)
+    depends_on:
+      greenops-ollama:
+        condition: service_started
+    
+    # Resource limits (adjust based on your server)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    
+    # Container health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+
+  # ─────────────────────────────────────────────
+  # Ollama LLM Server (AI Refactoring Engine)
+  # ─────────────────────────────────────────────
+  greenops-ollama:
+    image: ollama/ollama:latest
+    container_name: greenops-ollama
+    
+    restart: unless-stopped
+    networks:
+      - greenops-network
+    
+    ports:
+      - "11434:11434"
+    
+    # Persist Ollama models
+    volumes:
+      - ollama-models:/root/.ollama
+    
+    environment:
+      # Keep model in memory for faster responses
+      - OLLAMA_KEEP_ALIVE=10m
+      # GPU support (uncomment if you have NVIDIA GPU)
+      # - OLLAMA_GPU=1
+    
+    # Resource limits for Ollama (can be memory intensive)
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    
+    # Health check - verify Ollama is responding
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    
+    # Pull model on startup
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        sleep 5
+        ollama pull $${OLLAMA_MODEL:-qwen2.5-coder:1.5b}
+        wait
+
+# ─────────────────────────────────────────────
+# Networks & Volumes
+# ─────────────────────────────────────────────
+networks:
+  greenops-network:
+    driver: bridge
+
+volumes:
+  greenops-models:
+    driver: local
+  ollama-models:
+    driver: local
