@@ -30,6 +30,7 @@ venv/
 ENV/
 env/
 .venv
+venv_*/
 
 # IDE
 .vscode/
@@ -100,3 +101,22 @@ dist/
 secrets/
 .secrets
 credentials.json
+
+# Project generated artifacts
+model_metrics.json
+training_data.csv
+OllamaSetup.exe
+
+# Local notes / generated handoff files
+COMPLETE_PROJECT_DETAILS.md
+DOCKER_HUB.md
+DOCKER_RUN_LOCALLY.md
+DOCKER_SETUP_NEXT_STEPS.md
+FIXES_AND_DEPLOYMENT.md
+QUICK_START.txt
+
+# Local helper / scratch files
+docker-build.bat
+docker-build.sh
+test_grid_config.py
+training_model1.py
